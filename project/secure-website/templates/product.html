@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+  <p><a href="{{ url_for('products') }}">Products</a></p>
+  <p id="message"></p>
+
+  <h1>{{ product.name }}</h1>
+  <img src="{{ url_for('image', filename=product.image) }}" alt="{{ product.name }}">
+  <p>{{ product.description }}</p>
+
+  <form action="{{ url_for('check_stock', product_id=product.id) }}" method="post">
+    <input type="hidden" name="stock_api" value="{{ stock_api }}">
+    <button>Check stock</button>
+  </form>
+  {% if stock is not none %}<pre>{{ stock }}</pre>{% endif %}
+
+  <h2>Reviews</h2>
+  <form action="{{ url_for('add_review', product_id=product.id) }}" method="post">
+    <label>Review <textarea name="body" rows="4" required></textarea></label>
+    <button>Post review</button>
+  </form>
+
+  {% for review in reviews %}<p>{{ review }}</p>{% endfor %}
+{% endblock %}

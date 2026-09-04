@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Account{% endblock %}
+
+{% block content %}
+  <p><a href="{{ url_for('products') }}">Products</a></p>
+  <h1>Account</h1>
+  <form method="post">
+    <label>Display name <input name="display_name" value="{{ account.display_name }}"></label>
+    <label>Email <input name="email" value="{{ account.email }}"></label>
+    <label>
+      Delivery update template
+      <textarea name="notification_template" rows="5">{{ notification_template }}</textarea>
+    </label>
+    <p>The fields <code>{{ '{{ tracking_reference }}' }}</code> and <code>{{ '{{ status }}' }}</code> are available.</p>
+    <button>Save</button>
+  </form>
+{% endblock %}
