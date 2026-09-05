@@ -1,6 +1,9 @@
 import os
 import sqlite3
 import subprocess
+import re
+from flask import Flask
+from flask_wtf.csrf import CSRFProtect
 from functools import wraps
 from pathlib import Path
 from urllib.request import urlopen
@@ -18,7 +21,7 @@ from flask import (
 )
 from markupsafe import Markup
 
-
+TRACKING_PATTERN = re.compile(r"^[A-Za-z0-9-]{1,64}$")
 ROOT = Path(__file__).parent
 DATABASE = ROOT / "shop.db"
 CARRIER_LOOKUP = ROOT / "bin" / "carrier_lookup"
@@ -28,8 +31,12 @@ SUPPLIER_SERVICE_URL = os.environ.get(
 ).rstrip("/")
 
 app = Flask(__name__)
-app.secret_key = "local-dev-key"
+app.config["SECRET_KEY"] = "local-dev-secure-key-change-this-to-a-long-random-value-2026"
 
+csrf = CSRFProtect(app)
+
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
 def db():
     if "db" not in g:
@@ -150,14 +157,15 @@ def products():
     tracking_result = None
     if tracking is not None:
         try:
+            if not TRACKING_PATTERN.fullmatch(tracking):
+             return "Invalid tracking reference", 400
+
             result = subprocess.run(
-                "bash " + str(CARRIER_LOOKUP) + " " + tracking,
-                shell=True,
-                input="",
-                capture_output=True,
-                text=True,
-                timeout=4,
-            )
+             ["bash", str(CARRIER_LOOKUP), tracking],
+             capture_output=True,
+             text=True,
+             timeout=4,
+)
             status = result.stdout + result.stderr or "No matching order."
             source = get_notification_template(session["user"])
             tracking_result = Markup(
