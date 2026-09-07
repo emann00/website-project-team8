@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+  <p>{{ greeting }}</p>
+  <p><a href="{{ url_for('account') }}">Account</a></p>
+
+  <h1>Products</h1>
+  <form method="get">
+    <label>Search <input name="q" value="{{ q }}"></label>
+    <button>Search</button>
+  </form>
+
+  {% if search_summary %}<p>{{ search_summary }}</p>{% endif %}
+
+  <ul>
+    {% for product in products %}
+      <li><a href="{{ url_for('product', product_id=product.id) }}">{{ product.name }}</a></li>
+    {% endfor %}
+  </ul>
+
+  <h2>Track order</h2>
+  <form method="get">
+    <label>Tracking reference <input name="tracking" value="{{ tracking or '' }}"></label>
+    <button>Track</button>
+  </form>
+  {% if tracking_result is not none %}{{ tracking_result }}{% endif %}
+{% endblock %}
