@@ -3,7 +3,6 @@ import sqlite3
 import subprocess
 import socket
 import ipaddress
-import flask
 import re
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
@@ -276,7 +275,7 @@ def add_review(product_id):
     return redirect(url_for("product", product_id=product_id) + "?message=Review%20submitted")
 
 
-ALLOWED_STOCK_HOSTS = {"127.0.0.1:5002"}
+ALLOWED_STOCK_HOSTS = {"127.0.0.1:5001"}
 
 
 def is_safe_stock_url(url):
@@ -373,4 +372,4 @@ def image():
 
 if __name__ == "__main__":
     setup_database()
-    app.run(host="127.0.0.1", port=5002)
+    app.run(host="127.0.0.1", port=5001)

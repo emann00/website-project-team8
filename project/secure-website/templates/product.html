@@ -11,16 +11,30 @@
   <p>{{ product.description }}</p>
 
   <form action="{{ url_for('check_stock', product_id=product.id) }}" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="stock_api" value="{{ stock_api }}">
     <button>Check stock</button>
   </form>
-  {% if stock is not none %}<pre>{{ stock }}</pre>{% endif %}
+
+  {% if stock is not none %}
+    <pre>{{ stock }}</pre>
+  {% endif %}
 
   <h2>Reviews</h2>
+
   <form action="{{ url_for('add_review', product_id=product.id) }}" method="post">
-    <label>Review <textarea name="body" rows="4" required></textarea></label>
-    <button>Post review</button>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <label>
+      Review
+      <textarea name="body" rows="4" required></textarea>
+    </label>
+
+    <button type="submit">Post review</button>
   </form>
 
-  {% for review in reviews %}<p>{{ review }}</p>{% endfor %}
+  {% for review in reviews %}
+    <p>{{ review }}</p>
+  {% endfor %}
+
 {% endblock %}
